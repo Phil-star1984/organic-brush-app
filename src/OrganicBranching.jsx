@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import p5 from "p5";
 
-const OrganicBranching = ({ settings = {} }) => {
+const OrganicBranching = ({ settings = {}, saveCanvas }) => {
   const sketchRef = useRef(null); // Referenz für das Canvas
   const branchesRef = useRef([]); // Zeichnungen bleiben erhalten
   const settingsRef = useRef(settings); // Dynamische Referenz für Settings
+  const p5InstanceRef = useRef(null); // Referenz zur p5-Instanz
 
   // Aktualisiere die Referenz der Einstellungen, wenn sie sich ändern
   useEffect(() => {
@@ -12,14 +13,13 @@ const OrganicBranching = ({ settings = {} }) => {
   }, [settings]);
 
   useEffect(() => {
-    let canvasInitialized = false; // Initialisierungsflag
-
     const sketch = (p) => {
+      let canvasInitialized = false; // Initialisierungsflag
+
       class Branch {
         constructor(x, y, angle, length, size, hue) {
           this.pos = p.createVector(x, y);
           this.vel = p5.Vector.fromAngle(angle);
-          this.originalLength = length;
           this.length = length;
           this.size = size;
           this.hue = hue;
@@ -67,7 +67,7 @@ const OrganicBranching = ({ settings = {} }) => {
         }
 
         draw() {
-          if (this.currentLength <= 0) return;
+          if (this.currentLength <= 0 || !canvasInitialized) return;
           const endX = this.pos.x + this.vel.x * this.currentLength;
           const endY = this.pos.y + this.vel.y * this.currentLength;
           p.colorMode(p.HSB);
@@ -86,7 +86,8 @@ const OrganicBranching = ({ settings = {} }) => {
         canvas.parent(sketchRef.current);
         p.background(0);
         p.colorMode(p.HSB);
-        canvasInitialized = true; // Canvas ist bereit
+        canvasInitialized = true;
+        p5InstanceRef.current = p; // Speichere p5-Instanz
       };
 
       p.mouseDragged = () => {
@@ -104,11 +105,12 @@ const OrganicBranching = ({ settings = {} }) => {
         branchesRef.current.push(branch);
       };
 
-      p.keyPressed = () => {
-        if (p.key === "c") {
-          branchesRef.current = [];
-          p.clear();
-          p.background(0);
+      p.draw = () => {
+        if (!canvasInitialized) return;
+        p.background(0, 0.1); // Leichter Transparenzeffekt
+        for (const branch of branchesRef.current) {
+          branch.grow();
+          branch.draw();
         }
       };
 
@@ -120,23 +122,22 @@ const OrganicBranching = ({ settings = {} }) => {
           branch.draw();
         }
       };
-
-      p.draw = () => {
-        if (!canvasInitialized) return;
-        p.background(0, 0.1); // Leichter Transparenzeffekt
-        for (const branch of branchesRef.current) {
-          branch.grow();
-          branch.draw();
-        }
-      };
     };
 
     const p5Instance = new p5(sketch);
 
     return () => {
       p5Instance.remove();
+      p5InstanceRef.current = null; // Lösche p5-Instanz
     };
-  }, []); // Der Sketch wird nur einmal erstellt
+  }, []);
+
+  // Save Canvas
+  useEffect(() => {
+    if (saveCanvas && p5InstanceRef.current) {
+      p5InstanceRef.current.saveCanvas("artwork", "jpg");
+    }
+  }, [saveCanvas]);
 
   return <div ref={sketchRef}></div>;
 };

@@ -13,10 +13,21 @@ function App() {
     baseHue: 180,
   });
 
+  const [saveCanvas, setSaveCanvas] = useState(false);
+
+  const handleDownload = () => {
+    setSaveCanvas(true);
+    setTimeout(() => setSaveCanvas(false), 0); // Reset the flag
+  };
+
   return (
     <div>
-      <Controls settings={settings} setSettings={setSettings} />
-      <OrganicBranching settings={settings} />
+      <Controls
+        settings={settings}
+        setSettings={setSettings}
+        onDownload={handleDownload}
+      />
+      <OrganicBranching settings={settings} saveCanvas={saveCanvas} />
     </div>
   );
 }

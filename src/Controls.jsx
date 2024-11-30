@@ -1,6 +1,6 @@
 import React from "react";
 
-const Controls = ({ settings, setSettings }) => {
+const Controls = ({ settings, setSettings, onDownload }) => {
   const handleChange = (key) => (e) => {
     setSettings((prev) => ({
       ...prev,
@@ -71,6 +71,7 @@ const Controls = ({ settings, setSettings }) => {
           onChange={handleChange("baseHue")}
         />
       </label>
+      <button onClick={onDownload}>Download Artwork</button>
     </div>
   );
 };

@@ -1,8 +1,6 @@
-// src/App.jsx
-
 import React, { useState } from "react";
 import OrganicBranching from "./OrganicBranching.jsx";
-import Controls from "./Controls";
+import Controls from "./Controls.jsx";
 import "./App.css"; // Optional für zusätzliche Styles
 
 function App() {

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import p5 from "p5";
 
-const OrganicBranching = ({ settings = {}, saveCanvas }) => {
+const OrganicBranching = ({ settings = {}, saveCanvas, clearCanvas }) => {
   const sketchRef = useRef(null); // Referenz für das Canvas
   const branchesRef = useRef([]); // Zeichnungen bleiben erhalten
   const settingsRef = useRef(settings); // Dynamische Referenz für Settings
@@ -15,6 +15,7 @@ const OrganicBranching = ({ settings = {}, saveCanvas }) => {
   useEffect(() => {
     const sketch = (p) => {
       let canvasInitialized = false; // Initialisierungsflag
+      let canvasBounds; // Bounds der Canvas
 
       class Branch {
         constructor(x, y, angle, length, size, hue) {
@@ -67,7 +68,7 @@ const OrganicBranching = ({ settings = {}, saveCanvas }) => {
         }
 
         draw() {
-          if (this.currentLength <= 0 || !canvasInitialized) return;
+          if (this.currentLength <= 0) return;
           const endX = this.pos.x + this.vel.x * this.currentLength;
           const endY = this.pos.y + this.vel.y * this.currentLength;
           p.colorMode(p.HSB);
@@ -88,10 +89,22 @@ const OrganicBranching = ({ settings = {}, saveCanvas }) => {
         p.colorMode(p.HSB);
         canvasInitialized = true;
         p5InstanceRef.current = p; // Speichere p5-Instanz
+        canvasBounds = canvas.elt.getBoundingClientRect(); // Speichere Canvas-Bounds
       };
 
       p.mouseDragged = () => {
         if (!canvasInitialized) return;
+
+        // Prüfe, ob die Maus innerhalb der Canvas liegt
+        if (
+          p.mouseX < 0 ||
+          p.mouseX > canvasBounds.width ||
+          p.mouseY < 0 ||
+          p.mouseY > canvasBounds.height
+        ) {
+          return; // Abbrechen, wenn die Maus nicht über der Canvas ist
+        }
+
         const currentSettings = settingsRef.current;
         const angle = p.random(p.TWO_PI);
         const branch = new Branch(
@@ -121,6 +134,7 @@ const OrganicBranching = ({ settings = {}, saveCanvas }) => {
         for (const branch of branchesRef.current) {
           branch.draw();
         }
+        canvasBounds = p5InstanceRef.current.canvas.getBoundingClientRect(); // Update Canvas-Bounds
       };
     };
 
@@ -131,6 +145,16 @@ const OrganicBranching = ({ settings = {}, saveCanvas }) => {
       p5InstanceRef.current = null; // Lösche p5-Instanz
     };
   }, []);
+
+  // Clear Canvas
+  useEffect(() => {
+    if (clearCanvas && p5InstanceRef.current) {
+      const p = p5InstanceRef.current;
+      branchesRef.current = [];
+      p.clear();
+      p.background(0);
+    }
+  }, [clearCanvas]);
 
   // Save Canvas
   useEffect(() => {

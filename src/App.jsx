@@ -14,10 +14,16 @@ function App() {
   });
 
   const [saveCanvas, setSaveCanvas] = useState(false);
+  const [clearCanvas, setClearCanvas] = useState(false);
 
   const handleDownload = () => {
     setSaveCanvas(true);
     setTimeout(() => setSaveCanvas(false), 0); // Reset the flag
+  };
+
+  const handleClearCanvas = () => {
+    setClearCanvas(true);
+    setTimeout(() => setClearCanvas(false), 0); // Reset the flag
   };
 
   return (
@@ -26,8 +32,13 @@ function App() {
         settings={settings}
         setSettings={setSettings}
         onDownload={handleDownload}
+        onClearCanvas={handleClearCanvas}
       />
-      <OrganicBranching settings={settings} saveCanvas={saveCanvas} />
+      <OrganicBranching
+        settings={settings}
+        saveCanvas={saveCanvas}
+        clearCanvas={clearCanvas}
+      />
     </div>
   );
 }

@@ -159,7 +159,10 @@ const OrganicBranching = ({ settings = {}, saveCanvas, clearCanvas }) => {
   // Save Canvas
   useEffect(() => {
     if (saveCanvas && p5InstanceRef.current) {
-      p5InstanceRef.current.saveCanvas("artwork", "jpg");
+      p5InstanceRef.current.saveCanvas(
+        "NiceCoincidence_by_Millionpainter",
+        "jpg"
+      );
     }
   }, [saveCanvas]);
 

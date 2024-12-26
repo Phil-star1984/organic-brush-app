@@ -30,7 +30,7 @@ body {
   height: 100%;
 }
 
-.controls-wrapper {
+.controls-wrapper-outside {
   position: fixed;
   top: 20px;
   right: 20px;
@@ -39,6 +39,29 @@ body {
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 12px;
   backdrop-filter: blur(13px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.settings-icon {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.controls-wrapper {
+  margin-top: 10px;
+  /* display: none; */
+}
+
+.settings-icon:hover,
+.settings-icon:focus {
+  transform: scale(1.3);
+}
+
+.settings-icon span {
+  font-size: 24px;
 }
 
 .controls-wrapper label {

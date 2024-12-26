@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Controls = ({ settings, setSettings, onDownload, onClearCanvas }) => {
+  const [settingsVisible, setSettingsVisible] = useState(true);
+
   const handleChange = (key) => (e) => {
     setSettings((prev) => ({
       ...prev,
@@ -8,73 +10,90 @@ const Controls = ({ settings, setSettings, onDownload, onClearCanvas }) => {
     }));
   };
 
+  const switchSettingsVisibility = () => {
+    setSettingsVisible((current) => !current);
+  };
+
   return (
-    <div className="controls-wrapper">
-      <label>
-        Brush Size:
-        <input
-          type="range"
-          min="1"
-          max="30"
-          value={settings.brushSize}
-          onChange={handleChange("brushSize")}
-        />
-      </label>
-      <label>
-        Growth Speed:
-        <input
-          type="range"
-          min="0.5"
-          max="5"
-          step="0.1"
-          value={settings.growthSpeed}
-          onChange={handleChange("growthSpeed")}
-        />
-      </label>
-      <label>
-        Branch Length:
-        <input
-          type="range"
-          min="50"
-          max="200"
-          value={settings.branchLength}
-          onChange={handleChange("branchLength")}
-        />
-      </label>
-      <label>
-        Branch Count:
-        <input
-          type="range"
-          min="1"
-          max="5"
-          value={settings.branchCount}
-          onChange={handleChange("branchCount")}
-        />
-      </label>
-      <label>
-        Color Variation:
-        <input
-          type="range"
-          min="0"
-          max="360"
-          value={settings.hueRange}
-          onChange={handleChange("hueRange")}
-        />
-      </label>
-      <label>
-        Base Color:
-        <input
-          type="range"
-          min="0"
-          max="360"
-          value={settings.baseHue}
-          onChange={handleChange("baseHue")}
-        />
-      </label>
-      <div className="clear-download-wrapper">
-        <button onClick={onClearCanvas}>Clear Canvas</button>
-        <button onClick={onDownload}>Download Artwork</button>
+    <div className="controls-wrapper-outside">
+      <div
+        className="settings-icon"
+        onClick={switchSettingsVisibility}
+        role="button"
+        tabIndex="0"
+        aria-label="Toggle settings"
+      >
+        <span aria-hidden="true">⚙️</span>
       </div>
+      {settingsVisible && (
+        <div className="controls-wrapper">
+          <label>
+            Brush Size:
+            <input
+              type="range"
+              min="1"
+              max="30"
+              value={settings.brushSize}
+              onChange={handleChange("brushSize")}
+            />
+          </label>
+          <label>
+            Growth Speed:
+            <input
+              type="range"
+              min="0.5"
+              max="5"
+              step="0.1"
+              value={settings.growthSpeed}
+              onChange={handleChange("growthSpeed")}
+            />
+          </label>
+          <label>
+            Branch Length:
+            <input
+              type="range"
+              min="50"
+              max="200"
+              value={settings.branchLength}
+              onChange={handleChange("branchLength")}
+            />
+          </label>
+          <label>
+            Branch Count:
+            <input
+              type="range"
+              min="1"
+              max="5"
+              value={settings.branchCount}
+              onChange={handleChange("branchCount")}
+            />
+          </label>
+          <label>
+            Color Variation:
+            <input
+              type="range"
+              min="0"
+              max="360"
+              value={settings.hueRange}
+              onChange={handleChange("hueRange")}
+            />
+          </label>
+          <label>
+            Base Color:
+            <input
+              type="range"
+              min="0"
+              max="360"
+              value={settings.baseHue}
+              onChange={handleChange("baseHue")}
+            />
+          </label>
+          <div className="clear-download-wrapper">
+            <button onClick={onClearCanvas}>Clear Canvas</button>
+            <button onClick={onDownload}>Download Artwork</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
